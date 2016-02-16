@@ -5,6 +5,7 @@
 
 @interface FISPlaylist : NSObject
 
+@property (nonatomic, strong) NSString *name;
 @property (strong, nonatomic) NSMutableArray *songs;
 @property (strong, nonatomic) NSString *text;
 

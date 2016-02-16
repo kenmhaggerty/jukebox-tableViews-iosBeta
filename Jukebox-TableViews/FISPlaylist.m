@@ -9,6 +9,7 @@
     self = [super init];
     
     if (self) {
+        _name = @"untitled playlist";
         _songs = [self generateSongObjects];
         _text = [self textForSongs];
     }
