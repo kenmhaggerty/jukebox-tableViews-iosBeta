@@ -9,13 +9,18 @@
 #import "FISJukeboxTableViewController.h"
 #import <AVFoundation/AVFoundation.h>
 
-#define STOP_TEXT @"◼︎"
-#define PLAY_TEXT @"►"
+#define MILLISECONDS 500
+
+#define STOP_IMAGE [UIImage imageNamed:@"stop_icon"]
+#define PLAY_IMAGE [UIImage imageNamed:@"play_icon"]
 
 @interface FISJukeboxTableViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
 @property (nonatomic, weak) IBOutlet UIProgressView *progressView;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
+@property (nonatomic, weak) IBOutlet UISegmentedControl *segmentedControl;
+@property (nonatomic, weak) IBOutlet UIButton *playButton;
+@property (nonatomic, strong) NSTimer *timer;
 - (IBAction)play:(UIButton *)sender;
 - (IBAction)sort:(UISegmentedControl *)sender;
 @end
@@ -25,6 +30,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [self.playButton setBackgroundImage:PLAY_IMAGE forState:UIControlStateNormal];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
+    
+    [self sort:self.segmentedControl];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -58,7 +72,7 @@
     
     FISSong *song = self.playlist.songs[indexPath.row];
     [cell.textLabel setText:song.title];
-    [cell.detailTextLabel setText:song.artist];
+    [cell.detailTextLabel setText:[NSString stringWithFormat:@"%@ • %@", song.artist, song.album]];
     
     return cell;
 }
@@ -71,26 +85,32 @@
 
 - (IBAction)play:(UIButton *)sender {
     
-    if ([[sender titleForState:UIControlStateNormal] isEqualToString:STOP_TEXT]) {
-        [self.audioPlayer stop];
-        [sender setTitle:PLAY_TEXT forState:UIControlStateNormal];
-        return;
-    }
-    
-    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-    if (!indexPath) indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    FISSong *song = self.playlist.songs[indexPath.row];
+    BOOL play = [[sender backgroundImageForState:UIControlStateNormal] isEqual:PLAY_IMAGE];
+    FISSong *song = (play ? self.playlist.songs[0] : nil);
+    if (play) [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
+    else [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
     [self playSong:song];
 }
 
 - (void)playSong:(FISSong *)song {
     
+    [self.playButton setBackgroundImage:(song ? STOP_IMAGE : PLAY_IMAGE) forState:UIControlStateNormal];
+    [self.timer invalidate];
+    [self.progressView setProgress:0.0f animated:NO];
+    if (!song) {
+        [self.audioPlayer stop];
+        return;
+    }
+    
     [self setupAVAudioPlayWithFileName:song.fileName];
     [self.audioPlayer play];
+    [self setTimer:[NSTimer scheduledTimerWithTimeInterval:MILLISECONDS/1000.0f target:self selector:@selector(updateProgressView) userInfo:nil repeats:YES]];
 }
 
 - (IBAction)sort:(UISegmentedControl *)sender {
     
+    NSIndexPath *indexPath = self.tableView.indexPathForSelectedRow;
+    FISSong *selectedSong = (indexPath ? self.playlist.songs[indexPath.row] : nil);
     if ([[sender titleForSegmentAtIndex:sender.selectedSegmentIndex] isEqualToString:@"Title"]) {
         [self.playlist sortSongsByTitle];
     }
@@ -101,6 +121,7 @@
         [self.playlist sortSongsByArtist];
     }
     [self.tableView reloadData];
+    if (selectedSong) [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:[self.playlist.songs indexOfObject:selectedSong] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
 }
 
 - (void)setupAVAudioPlayWithFileName:(NSString *)fileName
@@ -115,6 +136,11 @@
     } else {
         [self.audioPlayer prepareToPlay];
     }
+}
+
+- (void)updateProgressView {
+    
+    [self.progressView setProgress:self.audioPlayer.currentTime/self.audioPlayer.duration animated:YES];
 }
 
 @end

@@ -142,7 +142,9 @@
                         </segmentedControl>
                     </navigationItem>
                     <connections>
+                        <outlet property="playButton" destination="P5C-BY-XsI" id="gpQ-oL-QXY"/>
                         <outlet property="progressView" destination="UqX-xd-ugE" id="tUJ-zK-77p"/>
+                        <outlet property="segmentedControl" destination="gEC-OE-4Ld" id="JbO-vV-GiS"/>
                         <outlet property="tableView" destination="Tbl-bF-g1y" id="dWy-HQ-2Eo"/>
                     </connections>
                 </viewController>

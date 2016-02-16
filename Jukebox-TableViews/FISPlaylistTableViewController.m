@@ -18,6 +18,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    FISPlaylist *playlist1 = [[FISPlaylist alloc] init];
+    [playlist1 setName:@"Exercise Mix"];
+    FISPlaylist *playlist2 = [[FISPlaylist alloc] init];
+    [playlist2 setName:@"Chill Mix"];
+    [self setPlaylists:@[playlist1, playlist2]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -37,6 +43,7 @@
     FISPlaylist *playlist = self.playlists[indexPath.row];
     
     [jukebox setPlaylist:playlist];
+    [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
