@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FISPlaylist.h"
 
 @interface FISJukeboxTableViewController : UIViewController
-
+@property (nonatomic, strong) FISPlaylist *playlist;
 @end

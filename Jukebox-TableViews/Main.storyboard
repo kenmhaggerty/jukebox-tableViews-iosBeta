@@ -142,6 +142,7 @@
                         </segmentedControl>
                     </navigationItem>
                     <connections>
+                        <outlet property="progressView" destination="UqX-xd-ugE" id="tUJ-zK-77p"/>
                         <outlet property="tableView" destination="Tbl-bF-g1y" id="dWy-HQ-2Eo"/>
                     </connections>
                 </viewController>

@@ -36,7 +36,7 @@
     NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
     FISPlaylist *playlist = self.playlists[indexPath.row];
     
-//    [jukebox setPlaylist:playlist];
+    [jukebox setPlaylist:playlist];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
