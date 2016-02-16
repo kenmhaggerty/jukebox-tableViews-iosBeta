@@ -33,9 +33,10 @@
     if (![segue.identifier isEqualToString:@"segueJukebox"]) return;
     
     FISJukeboxTableViewController *jukebox = (FISJukeboxTableViewController *)segue.destinationViewController;
-    // fetch playlist
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+    FISPlaylist *playlist = self.playlists[indexPath.row];
     
-    [jukebox setPlaylist:<#playlist#>];
+//    [jukebox setPlaylist:playlist];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -45,15 +46,16 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    return <#number of playlists#>;
+    return self.playlists.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistCell" forIndexPath:indexPath];
     
-    [cell.textLabel setText:<#playlist name#>];
-    [cell.detailTextLabel setText:<#number of songs#>];
+    FISPlaylist *playlist = self.playlists[indexPath.row];
+    [cell.textLabel setText:playlist.name];
+    [cell.detailTextLabel setText:[NSString stringWithFormat:@"%lu %@", playlist.songs.count, (playlist.songs.count == 1 ? @"song" : @"songs")]];
     
     return cell;
 }
