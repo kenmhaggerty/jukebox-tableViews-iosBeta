@@ -29,6 +29,8 @@
 		6024D6B6782413A757103E1A /* libPods-Jukebox-TableViewsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 808EBA1844301FA18FAB4CF2 /* libPods-Jukebox-TableViewsTests.a */; };
 		7D2DEB241C73C56E001A613F /* FISPlaylistTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2DEB231C73C56E001A613F /* FISPlaylistTableViewController.m */; };
 		7D2DEB271C73C578001A613F /* FISJukeboxTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2DEB261C73C578001A613F /* FISJukeboxTableViewController.m */; };
+		7D2DEB2A1C74CFE8001A613F /* FISCreatePlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2DEB291C74CFE8001A613F /* FISCreatePlaylistViewController.m */; };
+		7D2DEB2D1C74CFF3001A613F /* FISAddSongTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2DEB2C1C74CFF3001A613F /* FISAddSongTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +75,10 @@
 		7D2DEB231C73C56E001A613F /* FISPlaylistTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FISPlaylistTableViewController.m; sourceTree = "<group>"; };
 		7D2DEB251C73C578001A613F /* FISJukeboxTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FISJukeboxTableViewController.h; sourceTree = "<group>"; };
 		7D2DEB261C73C578001A613F /* FISJukeboxTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FISJukeboxTableViewController.m; sourceTree = "<group>"; };
+		7D2DEB281C74CFE8001A613F /* FISCreatePlaylistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FISCreatePlaylistViewController.h; sourceTree = "<group>"; };
+		7D2DEB291C74CFE8001A613F /* FISCreatePlaylistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FISCreatePlaylistViewController.m; sourceTree = "<group>"; };
+		7D2DEB2B1C74CFF3001A613F /* FISAddSongTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FISAddSongTableViewController.h; sourceTree = "<group>"; };
+		7D2DEB2C1C74CFF3001A613F /* FISAddSongTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FISAddSongTableViewController.m; sourceTree = "<group>"; };
 		808EBA1844301FA18FAB4CF2 /* libPods-Jukebox-TableViewsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Jukebox-TableViewsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0CBB249B7415A2CE2149853 /* Pods-Jukebox-TableViewsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jukebox-TableViewsTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Jukebox-TableViewsTests/Pods-Jukebox-TableViewsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DF54BBD20AAA95B0518036CA /* Pods-Jukebox-TableViewsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jukebox-TableViewsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Jukebox-TableViewsTests/Pods-Jukebox-TableViewsTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -104,6 +110,10 @@
 				7D2DEB231C73C56E001A613F /* FISPlaylistTableViewController.m */,
 				7D2DEB251C73C578001A613F /* FISJukeboxTableViewController.h */,
 				7D2DEB261C73C578001A613F /* FISJukeboxTableViewController.m */,
+				7D2DEB281C74CFE8001A613F /* FISCreatePlaylistViewController.h */,
+				7D2DEB291C74CFE8001A613F /* FISCreatePlaylistViewController.m */,
+				7D2DEB2B1C74CFF3001A613F /* FISAddSongTableViewController.h */,
+				7D2DEB2C1C74CFF3001A613F /* FISAddSongTableViewController.m */,
 			);
 			name = "New VCs";
 			sourceTree = "<group>";
@@ -378,10 +388,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				319F31CD19EF1B7D002F371E /* FISAppDelegate.m in Sources */,
+				7D2DEB2A1C74CFE8001A613F /* FISCreatePlaylistViewController.m in Sources */,
 				319F31F619EF1BD1002F371E /* FISSong.m in Sources */,
 				319F31F719EF1BD1002F371E /* FISPlaylist.m in Sources */,
 				319F31F119EF1BC1002F371E /* FISJukeboxViewController.m in Sources */,
 				7D2DEB241C73C56E001A613F /* FISPlaylistTableViewController.m in Sources */,
+				7D2DEB2D1C74CFF3001A613F /* FISAddSongTableViewController.m in Sources */,
 				319F31CA19EF1B7D002F371E /* main.m in Sources */,
 				7D2DEB271C73C578001A613F /* FISJukeboxTableViewController.m in Sources */,
 			);

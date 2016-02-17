@@ -8,6 +8,7 @@
 
 #import "FISJukeboxTableViewController.h"
 #import <AVFoundation/AVFoundation.h>
+#import "FISAddSongTableViewController.h"
 
 #define MILLISECONDS 500
 #define ANIMATION_DURATION 0.3f
@@ -15,7 +16,7 @@
 #define STOP_IMAGE [UIImage imageNamed:@"stop_icon"]
 #define PLAY_IMAGE [UIImage imageNamed:@"play_icon"]
 
-@interface FISJukeboxTableViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface FISJukeboxTableViewController () <UITableViewDataSource, UITableViewDelegate, FISAddSongTableViewControllerDelegate>
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
 @property (nonatomic, weak) IBOutlet UIProgressView *progressView;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
@@ -62,15 +63,16 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    
+    if (![segue.identifier isEqualToString:@"addSong"]) return;
+    
+    FISAddSongTableViewController *addSongTableViewController = (FISAddSongTableViewController *)((UINavigationController *)segue.destinationViewController).topViewController;
+    [addSongTableViewController setDelegate:self];
 }
-*/
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     
@@ -100,6 +102,8 @@
 }
 
 - (IBAction)play:(UIButton *)sender {
+    
+    if (!self.playlist.songs.count) return;
     
     BOOL play = [[sender backgroundImageForState:UIControlStateNormal] isEqual:PLAY_IMAGE];
     FISSong *song = (play ? self.playlist.songs[0] : nil);
@@ -140,8 +144,6 @@
 
 - (IBAction)sort:(UISegmentedControl *)sender {
     
-    NSIndexPath *indexPath = self.tableView.indexPathForSelectedRow;
-    FISSong *selectedSong = (indexPath ? self.playlist.songs[indexPath.row] : nil);
     if ([[sender titleForSegmentAtIndex:sender.selectedSegmentIndex] isEqualToString:@"Title"]) {
         [self.playlist sortSongsByTitle];
     }
@@ -152,7 +154,7 @@
         [self.playlist sortSongsByArtist];
     }
     [self.tableView reloadData];
-    if (selectedSong) [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:[self.playlist.songs indexOfObject:selectedSong] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+    if (self.currentSong) [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:[self.playlist.songs indexOfObject:self.currentSong] inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
 }
 
 - (void)setupAVAudioPlayWithFileName:(NSString *)fileName
@@ -190,6 +192,23 @@
     
     [self.progressView setProgress:[tapGestureRecognizer locationInView:self.progressView].x/self.progressView.bounds.size.width animated:NO];
     [self.audioPlayer setCurrentTime:self.audioPlayer.duration*self.progressView.progress];
+}
+
+- (void)addSongTableViewControllerDidCancel:(FISAddSongTableViewController *)sender {
+    
+    [sender dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (BOOL)addSongTableViewController:(FISAddSongTableViewController *)sender canAddSong:(FISSong *)song {
+    
+    return (![self.playlist.songs filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"%K == %@", NSStringFromSelector(@selector(fileName)), song.fileName]].count);
+}
+
+- (void)addSongTableViewController:(FISAddSongTableViewController *)sender addSong:(FISSong *)song {
+    
+    [self.playlist.songs addObject:song];
+    [self sort:self.segmentedControl];
+    [sender dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
