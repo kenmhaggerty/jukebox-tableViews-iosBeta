@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 #define MILLISECONDS 500
+#define ANIMATION_DURATION 0.3f
 
 #define STOP_IMAGE [UIImage imageNamed:@"stop_icon"]
 #define PLAY_IMAGE [UIImage imageNamed:@"play_icon"]
@@ -21,6 +22,12 @@
 @property (nonatomic, weak) IBOutlet UISegmentedControl *segmentedControl;
 @property (nonatomic, weak) IBOutlet UIButton *playButton;
 @property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, weak) IBOutlet UIView *playView;
+@property (nonatomic, weak) IBOutlet UILabel *songLabel;
+@property (nonatomic, weak) IBOutlet UILabel *artistLabel;
+@property (nonatomic, weak) IBOutlet UILabel *albumLabel;
+@property (nonatomic, weak) IBOutlet UILabel *progressLabel;
+@property (nonatomic, weak) IBOutlet UIView *infoView;
 - (IBAction)play:(UIButton *)sender;
 - (IBAction)sort:(UISegmentedControl *)sender;
 @end
@@ -32,6 +39,12 @@
     // Do any additional setup after loading the view.
     
     [self.playButton setBackgroundImage:PLAY_IMAGE forState:UIControlStateNormal];
+    
+    [self.infoView setAlpha:0.0f];
+    
+    UIEdgeInsets insets = UIEdgeInsetsMake(self.tableView.contentInset.top, self.tableView.contentInset.left, self.playView.frame.size.height, self.tableView.contentInset.right);
+    [self.tableView setContentInset:insets];
+    [self.tableView setScrollIndicatorInsets:insets];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -97,14 +110,26 @@
     [self.playButton setBackgroundImage:(song ? STOP_IMAGE : PLAY_IMAGE) forState:UIControlStateNormal];
     [self.timer invalidate];
     [self.progressView setProgress:0.0f animated:NO];
-    if (!song) {
-        [self.audioPlayer stop];
-        return;
-    }
-    
-    [self setupAVAudioPlayWithFileName:song.fileName];
-    [self.audioPlayer play];
-    [self setTimer:[NSTimer scheduledTimerWithTimeInterval:MILLISECONDS/1000.0f target:self selector:@selector(updateProgressView) userInfo:nil repeats:YES]];
+    [UIView animateWithDuration:ANIMATION_DURATION*0.5f animations:^{
+        [self.infoView setAlpha:0.0f];
+    } completion:^(BOOL finished) {
+        if (song) {
+            [self.songLabel setText:song.title];
+            [self.artistLabel setText:song.artist];
+            [self.albumLabel setText:song.album];
+            [self.progressLabel setText:@"0:00"];
+            [UIView animateWithDuration:ANIMATION_DURATION*0.5f animations:^{
+                [self.infoView setAlpha:1.0f];
+            }];
+            [self setupAVAudioPlayWithFileName:song.fileName];
+            [self.audioPlayer play];
+            [self setTimer:[NSTimer scheduledTimerWithTimeInterval:MILLISECONDS/1000.0f target:self selector:@selector(updateProgressView) userInfo:nil repeats:YES]];
+            return;
+        }
+        else {
+            [self.audioPlayer stop];
+        }
+    }];
 }
 
 - (IBAction)sort:(UISegmentedControl *)sender {
@@ -141,6 +166,7 @@
 - (void)updateProgressView {
     
     [self.progressView setProgress:self.audioPlayer.currentTime/self.audioPlayer.duration animated:YES];
+    [self.progressLabel setText:[NSString stringWithFormat:@"%d:%02d", (int)floorf(self.audioPlayer.currentTime/60.0f), (int)self.audioPlayer.currentTime % 60]];
 }
 
 @end
