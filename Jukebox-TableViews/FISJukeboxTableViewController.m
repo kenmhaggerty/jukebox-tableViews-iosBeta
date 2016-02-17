@@ -21,13 +21,14 @@
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 @property (nonatomic, weak) IBOutlet UISegmentedControl *segmentedControl;
 @property (nonatomic, weak) IBOutlet UIButton *playButton;
-@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, weak) NSTimer *timer;
 @property (nonatomic, weak) IBOutlet UIView *playView;
 @property (nonatomic, weak) IBOutlet UILabel *songLabel;
 @property (nonatomic, weak) IBOutlet UILabel *artistLabel;
 @property (nonatomic, weak) IBOutlet UILabel *albumLabel;
 @property (nonatomic, weak) IBOutlet UILabel *progressLabel;
 @property (nonatomic, weak) IBOutlet UIView *infoView;
+@property (nonatomic, weak) FISSong *currentSong;
 - (IBAction)play:(UIButton *)sender;
 - (IBAction)sort:(UISegmentedControl *)sender;
 @end
@@ -45,6 +46,8 @@
     UIEdgeInsets insets = UIEdgeInsetsMake(self.tableView.contentInset.top, self.tableView.contentInset.left, self.playView.frame.size.height, self.tableView.contentInset.right);
     [self.tableView setContentInset:insets];
     [self.tableView setScrollIndicatorInsets:insets];
+    
+    [self.progressView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(progressViewWasTapped:)]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -100,8 +103,6 @@
     
     BOOL play = [[sender backgroundImageForState:UIControlStateNormal] isEqual:PLAY_IMAGE];
     FISSong *song = (play ? self.playlist.songs[0] : nil);
-    if (play) [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
-    else [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
     [self playSong:song];
 }
 
@@ -110,9 +111,14 @@
     [self.playButton setBackgroundImage:(song ? STOP_IMAGE : PLAY_IMAGE) forState:UIControlStateNormal];
     [self.timer invalidate];
     [self.progressView setProgress:0.0f animated:NO];
+    
+    if (song) [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:[self.playlist.songs indexOfObject:song] inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
+    else [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
+    
     [UIView animateWithDuration:ANIMATION_DURATION*0.5f animations:^{
         [self.infoView setAlpha:0.0f];
     } completion:^(BOOL finished) {
+        [self setCurrentSong:song];
         if (song) {
             [self.songLabel setText:song.title];
             [self.artistLabel setText:song.artist];
@@ -165,8 +171,25 @@
 
 - (void)updateProgressView {
     
+    if (!self.audioPlayer.playing) {
+        FISSong *nextSong;
+        if (![self.currentSong isEqual:[self.playlist.songs lastObject]]) {
+            nextSong = self.playlist.songs[[self.playlist.songs indexOfObject:self.currentSong]+1];
+        }
+        [self playSong:nextSong];
+        return;
+    }
+    
     [self.progressView setProgress:self.audioPlayer.currentTime/self.audioPlayer.duration animated:YES];
     [self.progressLabel setText:[NSString stringWithFormat:@"%d:%02d", (int)floorf(self.audioPlayer.currentTime/60.0f), (int)self.audioPlayer.currentTime % 60]];
+}
+
+- (void)progressViewWasTapped:(UITapGestureRecognizer *)tapGestureRecognizer {
+    
+    if (!self.audioPlayer.playing) return;
+    
+    [self.progressView setProgress:[tapGestureRecognizer locationInView:self.progressView].x/self.progressView.bounds.size.width animated:NO];
+    [self.audioPlayer setCurrentTime:self.audioPlayer.duration*self.progressView.progress];
 }
 
 @end
